@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eunice Exclusiva - Donde la moda cobra vida</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f7e1a8, #e8a4a4, #d1c4e9);
+      color: #333;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3da25492-83e3-4513-a347-716e48479355.png');
+      background-size: cover;
+      background-position: center;
+    }
+    .product-card img {
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      border-radius: 0.5rem;
+    }
+    .product-card:hover img {
+      transform: scale(1.05);
+    }
+    .admin-panel {
+      display: none;
+    }
+    .image-preview {
+      display: none;
+      max-width: 100px;
+      max-height: 100px;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+    }
+    /* Modal styles */
+    #image-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+    #image-modal img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    #image-modal .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #fff;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      cursor: pointer;
+      line-height: 1;
+      text-align: center;
+      padding: 0;
+    }
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+      }
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-pink-600">Eunice Exclusiva</h1>
+        <p class="text-sm text-gray-600">“Donde la moda cobra vida”</p>
+      </div>
+      <nav>
+        <ul class="flex space-x-4">
+          <li><button class="category-btn hover:text-pink-600" data-category="all">Todas</button></li>
+          <li><button class="category-btn hover:text-pink-600" data-category="mujer">Ropa para Mujer</button></li>
+          <li><button class="category-btn hover:text-pink-600" data-category="ninos">Ropa para Niños</button></li>
+          <li><button class="category-btn hover:text-pink-600" data-category="hombre">Ropa para Hombre</button></li>
+          <li><button class="category-btn hover:text-pink-600" data-category="accesorios">Accesorios</button></li>
+          <li><button class="category-btn hover:text-pink-600" data-category="hogar">Hogar y Textiles</button></li>
+          <li><button class="category-btn hover:text-pink-600" data-category="ofertas">Ofertas y Promociones</button></li>
+        </ul>
+      </nav>
+      <button id="admin-btn" class="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700">Admin</button>
+    </div>
+  </header>
+
+  <section class="hero h-96 flex items-center justify-center text-center text-white px-4">
+    <div>
+      <h2 class="text-4xl font-bold mb-4">Bienvenido a Eunice Exclusiva</h2>
+      <p class="text-xl">Ropa usada de calidad a precios accesibles</p>
+    </div>
+  </section>
+
+  <main class="container mx-auto px-4 py-8">
+    <div id="products" class="products-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Productos se cargarán aquí -->
+    </div>
+  </main>
+
+  <!-- Modal para imagen ampliada -->
+  <div id="image-modal" class="flex">
+    <button class="close-btn" aria-label="Cerrar">&times;</button>
+    <img src="" alt="Imagen ampliada del producto" />
+  </div>
+
+  <!-- Panel de Administración -->
+  <section id="admin-panel" class="admin-panel container mx-auto px-4 py-8">
+    <div class="flex justify-end mb-4">
+      <button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm">Salir</button>
+    </div>
+    <h3 class="text-2xl font-bold mb-4">Panel de Administración</h3>
+    <form id="product-form" class="mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" id="product-name" placeholder="Nombre del Producto" class="border p-2 rounded" required />
+        <select id="product-category" class="border p-2 rounded" required>
+          <option value="mujer">Ropa para Mujer</option>
+          <option value="ninos">Ropa para Niños</option>
+          <option value="hombre">Ropa para Hombre</option>
+          <option value="accesorios">Accesorios</option>
+          <option value="hogar">Hogar y Textiles</option>
+          <option value="ofertas">Ofertas y Promociones</option>
+        </select>
+        <textarea id="product-description" placeholder="Descripción (ej. usado en buenas condiciones)" class="border p-2 rounded" required></textarea>
+        <input type="number" id="product-price" placeholder="Precio (USD)" min="0" step="0.01" class="border p-2 rounded" required />
+        <div>
+          <input type="file" id="product-image" accept="image/*" class="border p-2 rounded" required />
+          <img id="image-preview" class="image-preview mt-2" alt="Vista previa de la imagen del producto subida por admin" />
+        </div>
+      </div>
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded mt-4 hover:bg-green-700">Agregar Producto</button>
+    </form>
+    <div id="admin-products" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Lista de productos para admin -->
+    </div>
+  </section>
+
+  <footer class="bg-white text-center py-4">
+    <!-- Pie de página vacío -->
+  </footer>
+
+  <script>
+    let products = [];
+    let isAdmin = false;
+
+    // Carga segura de productos
+    try {
+      products = JSON.parse(localStorage.getItem('products')) || [
+        {
+          id: 1,
+          name: 'Vestido Floral Mujer',
+          category: 'mujer',
+          description: 'Usado en excelentes condiciones, talla M, patrón floral vibrante.',
+          price: 350.00,
+          image: 'https://placehold.co/400x400/pink/white/png?text=Vestido+Floral+Mujer'
+        },
+        {
+          id: 2,
+          name: 'Sudadera Niño',
+          category: 'ninos',
+          description: 'Usada ligeramente, talla 8-10 años, con estampado de dinosaurios.',
+          price: 220.00,
+          image: 'https://placehold.co/400x400/blue/white/png?text=Sudadera+Niño'
+        }
+      ];
+    } catch (e) {
+      console.error('Error cargando productos:', e);
+      localStorage.clear();
+      products = [
+        {
+          id: 1,
+          name: 'Vestido Floral Mujer',
+          category: 'mujer',
+          description: 'Usado en excelentes condiciones, talla M, patrón floral vibrante.',
+          price: 350.00,
+          image: 'https://placehold.co/400x400/pink/white/png?text=Vestido+Floral+Mujer'
+        },
+        {
+          id: 2,
+          name: 'Sudadera Niño',
+          category: 'ninos',
+          description: 'Usada ligeramente, talla 8-10 años, con estampado de dinosaurios.',
+          price: 220.00,
+          image: 'https://placehold.co/400x400/blue/white/png?text=Sudadera+Niño'
+        }
+      ];
+    }
+
+    try {
+      isAdmin = localStorage.getItem('isAdmin') === 'true';
+    } catch {
+      isAdmin = false;
+    }
+
+    function saveProducts() {
+      try {
+        localStorage.setItem('products', JSON.stringify(products));
+      } catch (e) {
+        alert('Error guardando productos. Revisa espacio en disco.');
+      }
+    }
+
+    function renderProducts(filter = 'all') {
+      const container = document.getElementById('products');
+      container.innerHTML = '';
+      products.forEach(product => {
+        if (filter === 'all' || product.category === filter) {
+          const card = document.createElement('div');
+          card.className = 'product-card bg-white p-4 rounded shadow-md';
+          card.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" class="w-full h-auto max-h-72 object-contain rounded mb-4" data-fullsrc="${product.image}" />
+            <h4 class="text-lg font-bold">${product.name}</h4>
+            <p class="text-sm text-gray-600 mb-1">Categoría: ${product.category}</p>
+            <p class="text-sm mb-1">${product.description}</p>
+            <p class="text-pink-600 font-semibold text-lg">Precio: $${product.price.toFixed(2)} USD</p>
+          `;
+          container.appendChild(card);
+        }
+      });
+      addImageClickListeners();
+    }
+
+    function addImageClickListeners() {
+      document.querySelectorAll('#products img').forEach(img => {
+        img.addEventListener('click', () => {
+          const modal = document.getElementById('image-modal');
+          const modalImg = modal.querySelector('img');
+          modalImg.src = img.dataset.fullsrc || img.src;
+          modal.style.display = 'flex';
+        });
+      });
+    }
+
+    document.querySelector('#image-modal .close-btn').addEventListener('click', () => {
+      document.getElementById('image-modal').style.display = 'none';
+    });
+    document.getElementById('image-modal').addEventListener('click', e => {
+      if (e.target.id === 'image-modal') {
+        e.target.style.display = 'none';
+      }
+    });
+
+    function renderAdminProducts() {
+      if (!isAdmin) return;
+      const container = document.getElementById('admin-products');
+      container.innerHTML = '';
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card bg-white p-4 rounded shadow-md relative';
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" class="w-full h-32 object-contain rounded mb-2" />
+          <h4 class="text-sm font-bold">${product.name}</h4>
+          <p class="text-xs text-gray-600 mb-1">Precio: $${product.price.toFixed(2)} USD</p>
+          <button onclick="editProduct(${product.id})" class="bg-yellow-500 text-white px-2 py-1 rounded mt-2 mr-2">Editar</button>
+          <button onclick="deleteProduct(${product.id})" class="bg-red-500 text-white px-2 py-1 rounded mt-2">Eliminar</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.deleteProduct = function(id) {
+      products = products.filter(p => p.id !== id);
+      saveProducts();
+      renderProducts();
+      renderAdminProducts();
+    };
+
+    window.editProduct = function(id) {
+      const product = products.find(p => p.id === id);
+      if (product) {
+        document.getElementById('product-name').value = product.name;
+        document.getElementById('product-category').value = product.category;
+        document.getElementById('product-description').value = product.description;
+        document.getElementById('product-price').value = product.price.toFixed(2);
+        alert('Para cambiar la imagen, selecciona una nueva.');
+      }
+    };
+
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', () => renderProducts(btn.dataset.category));
+    });
+
+    document.getElementById('admin-btn').addEventListener('click', () => {
+      if (isAdmin) {
+        if (confirm('¿Cerrar sesión de admin?')) {
+          isAdmin = false;
+          localStorage.setItem('isAdmin', 'false');
+          document.getElementById('admin-panel').style.display = 'none';
+          alert('Sesión de admin cerrada.');
+        }
+        return;
+      }
+      const password = prompt('Ingresa la contraseña de admin:');
+      if (password === '2005') {
+        isAdmin = true;
+        localStorage.setItem('isAdmin', 'true');
+        document.getElementById('admin-panel').style.display = 'block';
+        renderAdminProducts();
+        alert('Acceso concedido. Eres el administrador.');
+      } else {
+        alert('Contraseña incorrecta.');
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      if (confirm('¿Cerrar sesión de admin?')) {
+        isAdmin = false;
+        localStorage.setItem('isAdmin', 'false');
+        document.getElementById('admin-panel').style.display = 'none';
+        alert('Sesión de admin cerrada.');
+      }
+    });
+
+    document.getElementById('product-image').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = event => {
+          const preview = document.getElementById('image-preview');
+          preview.src = event.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        document.getElementById('image-preview').style.display = 'none';
+      }
+    });
+
+    document.getElementById('product-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!isAdmin) {
+        alert('Solo el administrador puede agregar productos.');
+        return;
+      }
+      const name = document.getElementById('product-name').value.trim();
+      const category = document.getElementById('product-category').value;
+      const description = document.getElementById('product-description').value.trim();
+      const priceStr = document.getElementById('product-price').value.trim();
+      const price = parseFloat(priceStr);
+      if (isNaN(price) || price < 0) {
+        alert('Ingresa un precio válido mayor o igual a 0.');
+        return;
+      }
+      const fileInput = document.getElementById('product-image');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Selecciona una imagen.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = event => {
+        const imageUrl = event.target.result;
+        const newProduct = {
+          id: Date.now(),
+          name,
+          category,
+          description,
+          price,
+          image: imageUrl
+        };
+        products.push(newProduct);
+        saveProducts();
+        renderProducts();
+        renderAdminProducts();
+        e.target.reset();
+        document.getElementById('image-preview').style.display = 'none';
+        alert('Producto agregado exitosamente.');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (isAdmin) {
+      document.getElementById('admin-panel').style.display = 'block';
+      renderAdminProducts();
+    }
+
+    renderProducts();
+  </script>
+</body>
+</html>
